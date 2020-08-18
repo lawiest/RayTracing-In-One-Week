@@ -78,7 +78,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <OutDir>$(SolutionDir)$(projectName)\$(Configuration)$(Platform)\</OutDir>
+    <OutDir>$(SolutionDir)$(Configuration)$(Platform)\</OutDir>
     <IntDir>../../middle\$(projectName)\$(Configuration)$(Platform)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
