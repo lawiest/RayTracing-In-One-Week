@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include <fstream>
+#include "../../common/color.h"
 
 int main()
 {
@@ -20,16 +21,19 @@ int main()
 
         for (int i = 0; i < image_width; ++i)
         {
+            /*
             auto r = double(i) / (image_width - 1);
             auto g = double(j) / (image_height - 1);
             auto b = 0.25f;
 
             int ir = static_cast<int>(r * 255.999);
             int ig = static_cast<int>(g * 255.999);
-            int ib = static_cast<int>(b * 255.999);
+            int ib = static_cast<int>(b * 255.999);*/
 
-            file << ir << " " << ig << " " << ib << "\n";
+            //file << ir << " " << ig << " " << ib << "\n";
 
+            color color(double(i) / (image_width - 1), double(j) / (image_height - 1),0.25f);
+            write_color(file, color);
         }
     }
     std::cerr << "\nDone.\n";
