@@ -4,11 +4,29 @@
 #include <iostream>
 #include <fstream>
 #include "../../common/color.h"
+#include "../../common/ray.h"
+
+color ray_color(const ray r)
+{
+     vec3 dir = unit_vector(r.direction());
+     auto t = (dir.y() + 1.0) / 2.0;
+     return (1 - t) * color(1.0, 1.0, 1.0) + t * color(0.5, 0.7, 1.0);
+}
 
 int main()
 {
-    const int image_width = 256;
-    const int image_height = 256;
+    const auto aspect_ratio = 16.0 / 9.0;
+    const int image_width = 400;
+    const int image_height = static_cast<int>(image_width / aspect_ratio);
+
+    auto viewport_height = 2.0;
+    auto viewport_width = viewport_height * aspect_ratio;
+    auto focal_length = 1.0;
+
+    auto origine = vec3(0.0, 0.0, 0.0);
+    auto horizontal = vec3(viewport_width, 0.0, 0.0);
+    auto vertical = vec3(0.0, viewport_height, 0.0);
+    auto lower_left_corner = origine - horizontal / 2.0 - vertical / 2.0 - vec3(0.0, 0.0, focal_length);
 
     std::ofstream file;
     file.open("./image.ppm");
@@ -25,15 +43,20 @@ int main()
             auto r = double(i) / (image_width - 1);
             auto g = double(j) / (image_height - 1);
             auto b = 0.25f;
-
             int ir = static_cast<int>(r * 255.999);
             int ig = static_cast<int>(g * 255.999);
             int ib = static_cast<int>(b * 255.999);*/
-
             //file << ir << " " << ig << " " << ib << "\n";
+            //color color(double(i) / (image_width - 1), double(j) / (image_height - 1),0.25f);
 
-            color color(double(i) / (image_width - 1), double(j) / (image_height - 1),0.25f);
-            write_color(file, color);
+            auto u = double(i) / image_width;
+            auto v = double(j) / image_height;
+
+            ray r(origine, lower_left_corner + u * horizontal + v * vertical - origine );
+
+            color c = ray_color(r);
+
+            write_color(file, c);
         }
     }
     std::cerr << "\nDone.\n";
