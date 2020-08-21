@@ -6,8 +6,20 @@
 #include "../../common/color.h"
 #include "../../common/ray.h"
 
+bool hit_sphere(const point3& center, const double& radius, const ray& r)
+{
+    auto A_C = r.origin() - center;
+    auto A = dot(r.direction(), r.direction());
+    auto B = 2 * dot(r.direction(), A_C);
+    auto C = dot(A_C, A_C) - (radius * radius);
+    return B * B - 4 * A * C >= 0;
+}
+
 color ray_color(const ray r)
 {
+    if (hit_sphere(point3(0.0, 0.0, -1.0), 0.5, r))
+        return color(1.0,0.0,0.0);
+
      vec3 dir = unit_vector(r.direction());
      auto t = (dir.y() + 1.0) / 2.0;
      return (1 - t) * color(1.0, 1.0, 1.0) + t * color(0.5, 0.7, 1.0);
@@ -62,6 +74,9 @@ int main()
     std::cerr << "\nDone.\n";
 
     file.close();
+
+
+
     std::cout << "Hello World!\n";
 }
 
