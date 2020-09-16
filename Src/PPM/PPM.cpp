@@ -3,34 +3,36 @@
 
 #include <iostream>
 #include <fstream>
-#include "../../common/color.h"
-#include "../../common/ray.h"
+#include "../../include/common/color.h"
+#include "../../include/common/rtweekend.h"
+#include "../../include/hittable_list.h"
+#include "../../include/sphere.h"
 
-bool hit_sphere(const point3& center, const double& radius, const ray& r)
+
+color ray_color(const ray& r, const hittable& world)
 {
-    auto A_C = r.origin() - center;
-    auto A = dot(r.direction(), r.direction());
-    auto B = 2 * dot(r.direction(), A_C);
-    auto C = dot(A_C, A_C) - (radius * radius);
-    return B * B - 4 * A * C >= 0;
-}
-
-color ray_color(const ray r)
-{
-    if (hit_sphere(point3(0.0, 0.0, -1.0), 0.5, r))
-        return color(1.0,0.0,0.0);
-
-     vec3 dir = unit_vector(r.direction());
-     auto t = (dir.y() + 1.0) / 2.0;
-     return (1 - t) * color(1.0, 1.0, 1.0) + t * color(0.5, 0.7, 1.0);
+	hit_record rec;
+	if (world.hit(r, 0, infinity, rec)) {
+		return 0.5 * (rec.normal + color(1, 1, 1));
+	}
+	vec3 unit_direction = unit_vector(r.direction());
+	auto t = 0.5 * (unit_direction.y() + 1.0);
+	return (1.0 - t) * color(1.0, 1.0, 1.0) + t * color(0.5, 0.7, 1.0);
 }
 
 int main()
 {
+    //image
     const auto aspect_ratio = 16.0 / 9.0;
     const int image_width = 400;
     const int image_height = static_cast<int>(image_width / aspect_ratio);
 
+	// World
+	hittable_list world;
+	world.add(make_shared<sphere>(point3(0, 0, -1), 0.5));
+	world.add(make_shared<sphere>(point3(0, -100.5, -1), 100));
+
+    //Camera
     auto viewport_height = 2.0;
     auto viewport_width = viewport_height * aspect_ratio;
     auto focal_length = 1.0;
@@ -40,6 +42,7 @@ int main()
     auto vertical = vec3(0.0, viewport_height, 0.0);
     auto lower_left_corner = origine - horizontal / 2.0 - vertical / 2.0 - vec3(0.0, 0.0, focal_length);
 
+    //render
     std::ofstream file;
     file.open("./image.ppm");
 
@@ -51,22 +54,12 @@ int main()
 
         for (int i = 0; i < image_width; ++i)
         {
-            /*
-            auto r = double(i) / (image_width - 1);
-            auto g = double(j) / (image_height - 1);
-            auto b = 0.25f;
-            int ir = static_cast<int>(r * 255.999);
-            int ig = static_cast<int>(g * 255.999);
-            int ib = static_cast<int>(b * 255.999);*/
-            //file << ir << " " << ig << " " << ib << "\n";
-            //color color(double(i) / (image_width - 1), double(j) / (image_height - 1),0.25f);
-
             auto u = double(i) / image_width;
             auto v = double(j) / image_height;
 
             ray r(origine, lower_left_corner + u * horizontal + v * vertical - origine );
 
-            color c = ray_color(r);
+            color c = ray_color(r,world);
 
             write_color(file, c);
         }

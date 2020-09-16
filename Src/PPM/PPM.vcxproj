@@ -145,6 +145,15 @@
   <ItemGroup>
     <ClCompile Include="PPM.cpp" />
   </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\include\common\color.h" />
+    <ClInclude Include="..\..\include\common\hittable.h" />
+    <ClInclude Include="..\..\include\common\ray.h" />
+    <ClInclude Include="..\..\include\common\rtweekend.h" />
+    <ClInclude Include="..\..\include\common\vec3.h" />
+    <ClInclude Include="..\..\include\hittable_list.h" />
+    <ClInclude Include="..\..\include\sphere.h" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
